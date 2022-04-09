@@ -64,6 +64,8 @@ class IdealistaListingsSpider(scrapy.Spider):
     def parse_house(self, item):
         this_house = OrderedDict()
         try:
+            this_house['crawl_date'] = datetime.datetime.now().strftime("%Y-%m-%d")
+            this_house['crawl_datetime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             this_house['id'] = item.attrib['data-adid']
             this_house['name'] = item.css('div.item-info-container a.item-link').attrib['title'].strip().replace(',',';').replace('\n', '.')
             this_house['price'] = item.css('span.item-price').xpath('text()')[-1].get()
@@ -73,12 +75,11 @@ class IdealistaListingsSpider(scrapy.Spider):
             this_house['height'] = item.css('div.item-detail-char span.item-detail')[2].xpath('text()')[-1].get().strip()
             this_house['type'] = item.css('div.item-detail-char span.item-detail small')[-1].xpath('text()')[-1].get().strip()
             this_house['elevator'] =  "yes" if 'ascensor' in this_house['type'] else "no"
-            this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
-            this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
             this_house['seller_phone'] = item.css('span.icon-phone')[0].xpath('text()')[-1].get().strip()
             this_house['description'] = item.css('div.description p')[0].xpath('text()')[-1].get().strip().replace(',',';').replace('\n', '.')
-            this_house['crawl_datetime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            this_house['crawl_date'] = datetime.datetime.now().strftime("%Y-%m-%d")
+            this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
+            this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
+
 
             logging.info(f"House parsed: {this_house}")
         except Exception as e:
