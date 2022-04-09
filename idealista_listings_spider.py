@@ -6,6 +6,20 @@ import csv
 import time
 
 
+request_headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    , 'accept-encoding' : 'gzip, deflate, br'
+                    , 'accept-language' : 'es-ES,es;q=0.9'
+                    , 'cache-control': 'no-cache'
+                    , 'pragma': 'no-cache'
+                    , 'sec-fetch-dest': 'document'
+                    , 'sec-fetch-mode' : 'navigate'
+                    , 'sec-fetch-site' : 'none'
+                    , 'sec-fetch-user' : '?1'
+                    , 'sec-gpc': '1'
+                    , 'upgrade-insecure-requests': '1'
+                    , 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36'
+                    }
+
 
 
 class IdealistaListingsSpider(scrapy.Spider):
@@ -15,14 +29,21 @@ class IdealistaListingsSpider(scrapy.Spider):
         super(IdealistaListingsSpider, self).__init__(*args, **kwargs)
         # self.zone = 'delicias'
         self.zone = 'rondilla-santa-clara'
-        self.start_urls = [f'https://www.idealista.com/venta-viviendas/valladolid/{self.zone}/pagina-1.htm']
         self.houses = []
+
+
+
+    def start_requests(self):
+        urls = [f'https://www.idealista.com/venta-viviendas/valladolid/{self.zone}/pagina-1.htm']
+        for url in urls:
+            yield scrapy.Request(url=url, headers=request_headers)
+
+
 
 
     def parse(self, response, **kwargs):
 
         table_houses = response.css('article.item')
-
 
         for item in table_houses:
             self.parse_house(item)
@@ -36,7 +57,7 @@ class IdealistaListingsSpider(scrapy.Spider):
             next_link = "https://www.idealista.com" + next_page.attrib['href']
             logging.info(f"Moving on to next page: {next_link}")
             time.sleep(2)
-            yield scrapy.Request(url=next_link)
+            yield scrapy.Request(url=next_link, headers=request_headers)
 
 
 
@@ -58,7 +79,7 @@ class IdealistaListingsSpider(scrapy.Spider):
             logging.info(f"House parsed: {this_house}")
         except Exception as e:
             logging.info(f"Exception when parsing house {this_house}, exception {e}")
-
+        print(this_house)
         self.houses += [this_house]
 
     def closed(self, reason):
