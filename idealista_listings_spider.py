@@ -28,7 +28,14 @@ class IdealistaListingsSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super(IdealistaListingsSpider, self).__init__(*args, **kwargs)
         # self.zone = 'delicias'
-        self.zone = 'rondilla-santa-clara'
+        # self.zone = 'rondilla-santa-clara'
+        # self.zone = 'circular-vadillos'
+        # self.zone = 'huerta-del-rey'
+        # self.zone = 'parquesol'
+        self.zone = 'centro'
+        # self.zone = 'giron-villa-del-prado'
+        # self.zone = 'po-zorrilla-cuatro-de-marzo'
+
         self.houses = []
 
 
