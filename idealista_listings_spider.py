@@ -65,17 +65,21 @@ class IdealistaListingsSpider(scrapy.Spider):
         this_house = OrderedDict()
         try:
             this_house['id'] = item.attrib['data-adid']
-            this_house['name'] = item.css('div.item-info-container a.item-link').attrib['title'].strip().replace(',','_')
+            this_house['name'] = item.css('div.item-info-container a.item-link').attrib['title'].strip().replace(',',';').replace('\n', '.')
             this_house['price'] = item.css('span.item-price').xpath('text()')[-1].get()
             this_house['url'] = item.css('div.item-info-container a.item-link').attrib['href']
             this_house['rooms'] = item.css('div.item-detail-char span.item-detail')[0].xpath('text()')[-1].get().strip()
             this_house['m2'] = item.css('div.item-detail-char span.item-detail')[1].xpath('text()')[-1].get().strip()
             this_house['height'] = item.css('div.item-detail-char span.item-detail')[2].xpath('text()')[-1].get().strip()
+            this_house['type'] = item.css('div.item-detail-char span.item-detail')[-1].xpath('text()')[-1].get().strip()
+            this_house['elevator'] =  "yes" if 'ascensor' in this_house['type'] else "no"
             this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
             this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
             this_house['seller_phone'] = item.css('span.icon-phone')[0].xpath('text()')[-1].get().strip()
-            this_house['description'] = item.css('div.description p')[0].xpath('text()')[-1].get().strip()
+            this_house['description'] = item.css('div.description p')[0].xpath('text()')[-1].get().strip().replace(',',';').replace('\n', '.')
             this_house['crawl_datetime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            this_house['crawl_date'] = datetime.datetime.now().strftime("%Y-%m-%d")
+
             logging.info(f"House parsed: {this_house}")
         except Exception as e:
             logging.info(f"Exception when parsing house {this_house}, exception {e}")
@@ -87,7 +91,7 @@ class IdealistaListingsSpider(scrapy.Spider):
         logging.info(f"Writing to Csv")
 
         if self.houses:
-            filename = f"houses_{self.zone}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            filename = f"data/houses_{self.zone}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
             with open(filename, 'w') as f:
                 dict_writer = csv.DictWriter(f, fieldnames=self.houses[0].keys(), dialect=csv.excel)
                 dict_writer.writeheader()
