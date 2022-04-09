@@ -71,7 +71,7 @@ class IdealistaListingsSpider(scrapy.Spider):
             this_house['rooms'] = item.css('div.item-detail-char span.item-detail')[0].xpath('text()')[-1].get().strip()
             this_house['m2'] = item.css('div.item-detail-char span.item-detail')[1].xpath('text()')[-1].get().strip()
             this_house['height'] = item.css('div.item-detail-char span.item-detail')[2].xpath('text()')[-1].get().strip()
-            this_house['type'] = item.css('div.item-detail-char span.item-detail')[-1].xpath('text()')[-1].get().strip()
+            this_house['type'] = item.css('div.item-detail-char span.item-detail small')[-1].xpath('text()')[-1].get().strip()
             this_house['elevator'] =  "yes" if 'ascensor' in this_house['type'] else "no"
             this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
             this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
