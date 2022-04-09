@@ -77,6 +77,7 @@ class IdealistaListingsSpider(scrapy.Spider):
             this_house['elevator'] =  "yes" if "con ascensor" in this_house['type'] else "no"
             this_house['seller_phone'] = item.css('span.icon-phone')[0].xpath('text()')[-1].get().strip()
             this_house['description'] = item.css('div.description p')[0].xpath('text()')[-1].get().strip().replace(',',';').replace('\n', '.')
+            this_house['euro_per_m2'] = round(float(this_house['price'].replace('.',''))/float(this_house['m2']),2)
             this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
             this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
 
