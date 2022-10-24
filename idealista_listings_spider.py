@@ -27,12 +27,12 @@ class IdealistaListingsSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super(IdealistaListingsSpider, self).__init__(*args, **kwargs)
-        # self.zone = 'delicias'
+        self.zone = 'delicias'
         # self.zone = 'rondilla-santa-clara'
         # self.zone = 'circular-vadillos'
         # self.zone = 'huerta-del-rey'
         # self.zone = 'parquesol'
-        self.zone = 'centro'
+        # self.zone = 'centro'
         # self.zone = 'giron-villa-del-prado'
         # self.zone = 'po-zorrilla-cuatro-de-marzo'
 
@@ -80,13 +80,14 @@ class IdealistaListingsSpider(scrapy.Spider):
             this_house['rooms'] = item.css('div.item-detail-char span.item-detail')[0].xpath('text()')[-1].get().strip()
             this_house['m2'] = item.css('div.item-detail-char span.item-detail')[1].xpath('text()')[-1].get().strip()
             this_house['height'] = item.css('div.item-detail-char span.item-detail')[2].xpath('text()')[-1].get().strip()
-            this_house['type'] = item.css('div.item-detail-char span.item-detail small')[-1].xpath('text()')[-1].get().strip()
+            this_house['type'] = item.css('div.item-detail-char span.item-detail')[-1].xpath('text()')[-1].get().strip()
+            # this_house['type'] = item.css('div.item-detail-char span.item-detail small')[-1].xpath('text()')[-1].get().strip()
             this_house['elevator'] =  "yes" if "con ascensor" in this_house['type'] else "no"
-            this_house['seller_phone'] = item.css('span.icon-phone')[0].xpath('text()')[-1].get().strip()
+            # this_house['seller_phone'] = item.css('span.icon-phone')[0].xpath('text()')[-1].get().strip()
             this_house['description'] = item.css('div.description p')[0].xpath('text()')[-1].get().strip().replace(',',';').replace('\n', '.')
-            this_house['euro_per_m2'] = round(float(this_house['price'].replace('.',''))/float(this_house['m2']),2)
-            this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
-            this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
+            this_house['euro_per_m2'] = round(float(this_house['price'].replace('.',''))/float(this_house['m2'].split()[0]),2)
+            # this_house['seller'] = item.css('div.item-info-container picture a').attrib['title']
+            # this_house['seller_url'] = item.css('div.item-info-container picture a').attrib['href']
 
 
             logging.info(f"House parsed: {this_house}")
